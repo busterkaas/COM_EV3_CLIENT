@@ -13,6 +13,7 @@ public class Main {
 		// } catch (IOException e) {
 		// System.out.println("Error " + e.getMessage());
 		// }
-		UserInterface userInterface = new UserInterface();
+		PCClientUI userInterface = new PCClientUI();
+		userInterface.setVisible(true);
 	}
 }

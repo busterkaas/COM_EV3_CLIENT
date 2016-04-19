@@ -1,36 +1,64 @@
 package GUI;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import Logic.PCClient;
 
-public class UserInterface {
+public class PCClientUI extends JFrame {
 
-	JFrame frame;
-	JPanel panel;
+	JPanel mainPanel;
 	JButton btnForwards, btnBackwards, btnRight, btnLeft, btnStop, btnQuit;
+	JTextField middlemanIpInput;
 	PCClient client;
 	String command;
 
-	public UserInterface() {
+	public PCClientUI() {
+		super("Robotics");
+		middlemanIpInput = new JTextField();
 		setupFrame();
+
 	}
 
 	private void setupFrame() {
-		frame = new JFrame("Robotics");
-		frame.setSize(800, 800);
-		frame.setLocationRelativeTo(null);
-		panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		frame.add(panel);
+		setLayout(new FlowLayout());
+		setSize(800, 800);
+		setLocationRelativeTo(null);
 
+		mainPanel = new JPanel(new FlowLayout());
+
+		setupButtons();
+		middlemanIpInput.setText("MOJN");
+		
+		
+		mainPanel.add(middlemanIpInput);
+		
+		mainPanel.add(btnForwards);
+
+		mainPanel.add(btnBackwards);
+
+		mainPanel.add(btnLeft);
+
+		mainPanel.add(btnRight);
+
+		mainPanel.add(btnStop);
+
+		mainPanel.add(btnQuit);
+
+		add(mainPanel);
+
+	}
+
+	private void setupButtons() {
 		// Buttons
 		btnForwards = new JButton("Forward");
 		btnForwards.addActionListener(new ActionListener() {
@@ -38,6 +66,7 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "forward";
 				informMiddleman();
+
 			}
 		});
 
@@ -47,6 +76,7 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "backward";
 				informMiddleman();
+
 			}
 		});
 
@@ -56,6 +86,7 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "right";
 				informMiddleman();
+
 			}
 		});
 
@@ -65,6 +96,7 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "left";
 				informMiddleman();
+
 			}
 		});
 
@@ -74,6 +106,7 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "stop";
 				informMiddleman();
+
 			}
 		});
 
@@ -83,24 +116,17 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "quit";
 				informMiddleman();
+
 			}
 		});
-
-		panel.add(btnForwards);
-		panel.add(btnBackwards);
-		panel.add(btnLeft);
-		panel.add(btnRight);
-		panel.add(btnStop);
-		panel.add(btnQuit);
-
-		frame.setVisible(true);
 	}
 
 	private void informMiddleman() {
 		try {
 			client.sendMessage(command);
 		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
+
 }
