@@ -1,17 +1,18 @@
 package GUI;
 
-import Logic.PCClient;
-
 public class Main {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		//PCClient client = new PCClient("100.81.132.41", 6000);
-		UserInterface userI = new UserInterface();
-		
-	}
+	static String ipAddress = "100.81.132.41";
+	static int socketPort = 6000;
 
+	public static void main(String[] args) {
+		// try {
+		// PCClient client = new PCClient(ipAddress, socketPort);
+		// } catch (UnknownHostException e) {
+		// System.out.println("Error " + e.getMessage());
+		// } catch (IOException e) {
+		// System.out.println("Error " + e.getMessage());
+		// }
+		UserInterface userInterface = new UserInterface();
+	}
 }

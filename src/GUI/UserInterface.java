@@ -30,7 +30,6 @@ public class UserInterface {
 		panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		frame.add(panel);
-		
 
 		// Buttons
 		btnForwards = new JButton("Forward");
@@ -39,7 +38,6 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "forward";
 				informMiddleman();
-
 			}
 		});
 
@@ -49,7 +47,6 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "backward";
 				informMiddleman();
-
 			}
 		});
 
@@ -59,7 +56,6 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "right";
 				informMiddleman();
-
 			}
 		});
 
@@ -69,7 +65,6 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "left";
 				informMiddleman();
-
 			}
 		});
 
@@ -79,7 +74,6 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "stop";
 				informMiddleman();
-
 			}
 		});
 
@@ -89,19 +83,16 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				command = "quit";
 				informMiddleman();
-
 			}
 		});
-		
+
 		panel.add(btnForwards);
 		panel.add(btnBackwards);
 		panel.add(btnLeft);
 		panel.add(btnRight);
 		panel.add(btnStop);
 		panel.add(btnQuit);
-		
-		
-		
+
 		frame.setVisible(true);
 	}
 
@@ -109,8 +100,7 @@ public class UserInterface {
 		try {
 			client.sendMessage(command);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error: " + e.getMessage());
 		}
 	}
-
 }
