@@ -24,8 +24,9 @@ public class PCClientUI extends JFrame {
 	JButton btnForward, btnBack, btnRight, btnLeft, btnStop, btnConnect, btnDisconnect;
 	JPanel mainPanel;
 	PCClient client;
-	String command;
+	String request;
 
+	// setup constructor...
 	public PCClientUI() {
 		super("PC -> MIDDLEMAN -> SLAVE");
 		setupTextField();
@@ -37,6 +38,8 @@ public class PCClientUI extends JFrame {
 
 	// BRUG EVT BAGEFTER DENNE TIL AT GIVE BESKEDER I, SÅSOM connected, ev3
 	// says... osv. INDTIL DER TRYKKES PÅ "DISCONNECT".
+
+	// textfield setup...
 	private void setupTextField() {
 		middlemanIpInput = new JTextField("EV3 ip-address");
 		Color colorRed = Color.BLACK;
@@ -57,13 +60,14 @@ public class PCClientUI extends JFrame {
 		});
 	}
 
+	// buttons setup...
 	// button : forward
 	private void setupButtons() {
 		btnForward = new JButton("FORWARD");
 		btnForward.setPreferredSize(new Dimension(120, 80));
 		btnForward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "forward";
+				request = "forward";
 				informMiddleman();
 			}
 		});
@@ -73,7 +77,7 @@ public class PCClientUI extends JFrame {
 		btnBack.setPreferredSize(new Dimension(120, 80));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "back";
+				request = "back";
 				informMiddleman();
 			}
 		});
@@ -83,7 +87,7 @@ public class PCClientUI extends JFrame {
 		btnRight.setPreferredSize(new Dimension(120, 80));
 		btnRight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "right";
+				request = "right";
 				informMiddleman();
 			}
 		});
@@ -93,7 +97,7 @@ public class PCClientUI extends JFrame {
 		btnLeft.setPreferredSize(new Dimension(120, 80));
 		btnLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "left";
+				request = "left";
 				informMiddleman();
 			}
 		});
@@ -103,7 +107,7 @@ public class PCClientUI extends JFrame {
 		btnStop.setPreferredSize(new Dimension(120, 80));
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "stop";
+				request = "stop";
 				informMiddleman();
 			}
 		});
@@ -112,7 +116,7 @@ public class PCClientUI extends JFrame {
 		btnConnect = new JButton("CONNECT");
 		btnConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "connect";
+				request = "connect";
 				informMiddleman();
 			}
 		});
@@ -121,12 +125,13 @@ public class PCClientUI extends JFrame {
 		btnDisconnect = new JButton("DISCONNECT");
 		btnDisconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				command = "disconnect";
+				request = "disconnect";
 				informMiddleman();
 			}
 		});
 	}
 
+	// frame setup...
 	private void setupFrame() {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -134,6 +139,7 @@ public class PCClientUI extends JFrame {
 		middlemanIpInput.requestFocus();
 	}
 
+	// panel setup...
 	private void setupPanel() {
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridBagLayout());
@@ -177,9 +183,10 @@ public class PCClientUI extends JFrame {
 		add(mainPanel);
 	}
 
+	// send request to middleman...
 	private void informMiddleman() {
 		try {
-			client.sendMessage(command);
+			client.sendMessage(request);
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
