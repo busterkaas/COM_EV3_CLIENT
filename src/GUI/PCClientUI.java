@@ -52,7 +52,7 @@ public class PCClientUI extends JFrame {
 
 			public void mouseExited(MouseEvent e) {
 				if (middlemanIpInput.getText().equals(""))
-					middlemanIpInput.setText("IP");
+					middlemanIpInput.setText("EV3 ip-address");
 			}
 		});
 	}
