@@ -10,34 +10,45 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import Logic.PCClient;
+import Helpers.ComSupport;
+import IHelpers.ICommunicationObserver;
 
-public class PCClientUI extends JFrame {
+public class PCClientUI extends JFrame implements ICommunicationObserver {
 
 	JTextField middlemanIpInput;
-	JButton btnForward, btnBack, btnRight, btnLeft, btnStop, btnConnect, btnDisconnect;
+	JTextArea textArea;
+	JScrollPane scrollPane;
+	JButton btnForward, btnBack, btnRight, btnLeft, btnStop, btnConnect,
+			btnDisconnect, btnGoExplore, btnUsercontrol, btnSlaveFollow,
+			btnSlaveStop;
 	JPanel mainPanel;
 	PCClient client;
-	String request;
+	
+	private String request;
+	private final static String newline = "\n";
+
+	private int socketPort = 6000;
 
 	// setup constructor...
 	public PCClientUI() {
 		super("PC -> MIDDLEMAN -> SLAVE");
 		setupTextField();
+		setupTextArea();
 		setupButtons();
 		setupPanel();
 		pack();
 		setupFrame();
-	}
 
-	// BRUG EVT BAGEFTER DENNE TIL AT GIVE BESKEDER I, SÅSOM connected, ev3
-	// says... osv. INDTIL DER TRYKKES PÅ "DISCONNECT".
+	}
 
 	// textfield setup...
 	private void setupTextField() {
@@ -60,6 +71,12 @@ public class PCClientUI extends JFrame {
 		});
 	}
 
+	private void setupTextArea() {
+		textArea = new JTextArea(10, 30);
+		scrollPane = new JScrollPane(textArea);
+		textArea.setEditable(false);
+	}
+
 	// buttons setup...
 	// button : forward
 	private void setupButtons() {
@@ -73,11 +90,11 @@ public class PCClientUI extends JFrame {
 		});
 
 		// button : back
-		btnBack = new JButton("BACK");
+		btnBack = new JButton("BACKWARD");
 		btnBack.setPreferredSize(new Dimension(120, 80));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				request = "back";
+				request = "backward";
 				informMiddleman();
 			}
 		});
@@ -116,8 +133,11 @@ public class PCClientUI extends JFrame {
 		btnConnect = new JButton("CONNECT");
 		btnConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				request = "connect";
-				informMiddleman();
+				try {
+					connectToEV3();
+				} catch (Exception e) {
+
+				}
 			}
 		});
 
@@ -125,7 +145,43 @@ public class PCClientUI extends JFrame {
 		btnDisconnect = new JButton("DISCONNECT");
 		btnDisconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				request = "disconnect";
+				request = "quit";
+				informMiddleman();
+			}
+		});
+
+		// button : Go explore
+		btnGoExplore = new JButton("Go explore");
+		btnGoExplore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				request = "explore";
+				informMiddleman();
+			}
+		});
+
+		// button : User control
+		btnUsercontrol = new JButton("Take control");
+		btnUsercontrol.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				request = "usercontrol";
+				informMiddleman();
+			}
+		});
+
+		// button : Slave stop
+		btnSlaveStop = new JButton("Make slave stop");
+		btnSlaveStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				request = "slavestop";
+				informMiddleman();
+			}
+		});
+
+		// button : Slave follow
+		btnSlaveFollow = new JButton("Make slave follow");
+		btnSlaveFollow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				request = "slavego";
 				informMiddleman();
 			}
 		});
@@ -134,7 +190,7 @@ public class PCClientUI extends JFrame {
 	// frame setup...
 	private void setupFrame() {
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		middlemanIpInput.requestFocus();
 	}
@@ -180,15 +236,55 @@ public class PCClientUI extends JFrame {
 		gbc.gridy = 3;
 		mainPanel.add(btnDisconnect, gbc);
 
+		gbc.gridx = 4;
+		gbc.gridy = 0;
+		mainPanel.add(btnUsercontrol, gbc);
+
+		gbc.gridx = 4;
+		gbc.gridy = 1;
+		mainPanel.add(btnGoExplore, gbc);
+		
+		gbc.gridx = 5;
+		gbc.gridy = 0;
+		mainPanel.add(btnSlaveFollow, gbc);
+
+		gbc.gridx = 5;
+		gbc.gridy = 1;
+		mainPanel.add(btnSlaveStop, gbc);
+
+		gbc.gridx = 5;
+		gbc.gridy = 2;
+		gbc.weighty = 2;
+		gbc.weightx = 2;
+
+		mainPanel.add(scrollPane, gbc);
+
 		add(mainPanel);
+
 	}
 
 	// send request to middleman...
 	private void informMiddleman() {
 		try {
-			client.sendMessage(request);
+			if (client != null) {
+				client.sendMessage(request);
+			} else {
+				textArea.append("No client connected" + newline);
+			}
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
+	}
+
+	private void connectToEV3() throws UnknownHostException, IOException {
+		String ip = middlemanIpInput.getText();
+		client = new PCClient(ip, socketPort);
+
+		client.setupMsgRecieving(PCClientUI.this);
+
+	}
+
+	public void ev3Message(String ev3Message) {
+		textArea.append(ev3Message + newline);
 	}
 }
